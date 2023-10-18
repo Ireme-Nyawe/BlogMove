@@ -1,19 +1,28 @@
 import express from "express";
-import { createBlog, deleteBlog, updateBlog, viewAllBlogs, viewOneBlog } from "../controller/blogController";
-import uploadfile from "../helper/multer";
-import Authorization from "../middleware/authentication";
+import {
+     createBlog,
+     allBlogs,
+     blogById, 
+     searchBlog,
+     deleteBlogById,
+    updateBlog,
+    createComment,
+    makeComment,
+    allcomment,
+    } from "../controller/blogcontroller";
+import fileUpload from "../helper/multer";
+import Authorization from "../middleware/Authentication";
+import CommentPermit from "../middleware/Authenticationcomment";
 
-const routeBlog = express.Router();
+const blogRoutes = express.Router();
+blogRoutes.post("/createBlog", Authorization, fileUpload.single("bogImage"), createBlog);
+blogRoutes.get("/readAllBlogs", allBlogs);
+blogRoutes.get("/readById/:id",blogById);
+blogRoutes.get("/searchBlog", searchBlog);
+blogRoutes.delete("/deleteBlog/:id", Authorization, deleteBlogById);
+blogRoutes.put("/updateBlog/:id", Authorization, fileUpload.single("bogImage"), updateBlog);
+blogRoutes.post("/:id/comment", CommentPermit,fileUpload.single("bogImage"), createComment);
+blogRoutes.post("/mycoment/:id", CommentPermit,fileUpload.single("bogImage"), makeComment);
+blogRoutes.get("/allcomments", allcomment);
 
-
-routeBlog.post("/create", Authorization,uploadfile.single("blogImage"),createBlog);
-routeBlog.get("/viewBlogs", viewAllBlogs);
-routeBlog.get("/viewBlog/:id", viewOneBlog);
-routeBlog.put("/update/:id", Authorization,uploadfile.single("blogImage"),updateBlog);
-routeBlog.delete("/delete/:id",Authorization,uploadfile.single("blogImage"),deleteBlog);
-
-
-export default routeBlog;
-
-
-
+export default blogRoutes;
